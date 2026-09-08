@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>RASTA - Pothole Detection & Society Inspection System</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..700,0..1,0..1" rel="stylesheet">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/styles.css?v=6">
+</head>
+<body>
+
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="brand-container">
+      <div class="brand-logo">R</div>
+      <div class="brand-info">
+        <h1>RASTA <span style="font-weight: 300; font-size: 0.95rem; color: #94a3b8;">Command Center</span></h1>
+        <p>Road Anomaly Sensing, Tracking &amp; Analysis</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <span class="badge badge-system" id="systemStatusBadge">● Real Video Detector Ready</span>
+      <button class="btn btn-primary" id="btnGoToReport">📄 Open Report</button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs-container">
+    <button class="nav-tab active" data-tab="tab-home" id="navTabHome">
+      <span class="nav-icon">home</span> <span>Home</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-upload" id="navTabUpload">
+      <span class="nav-icon">view_in_ar</span> <span>Scan</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-detection" id="navTabDetection">
+      <span class="nav-icon">monitoring</span> <span>Analysis</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-report" id="navTabReport">
+      <span class="nav-icon">description</span> <span>Reports</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-monitoring" id="navTabMonitoring">
+      <span class="nav-icon">report_problem</span> <span>Monitoring</span>
+    </button>
+    <button class="nav-tab" data-tab="tab-reconcile" id="navTabReconcile">
+      <span class="nav-icon">compare_arrows</span> <span>Reconcile</span>
+    </button>
+  </nav>
+
+  <!-- Main Content Body -->
+  <main class="app-container">
+
+    <!-- RASTA MOBILE COMMAND DASHBOARD -->
+    <section id="tab-home" class="tab-content active">
+      <div class="mobile-page-heading">
+        <div>
+          <span class="eyebrow">RASTA / NETWORK OVERVIEW</span>
+          <h2>Good morning, operator.</h2>
+          <p>Here is the latest picture of road health across your monitored segments.</p>
+        </div>
+        <span class="live-dot">LIVE SYSTEM</span>
+      </div>
+
+      <div class="hero-command-card">
+        <div>
+          <span class="eyebrow">ACTIVE SURVEY</span>
+          <h3>FAST NUCES Perimeter Road</h3>
+          <p>West Sector · Last scan 15 Aug 2026 · 2.8m GPS accuracy</p>
+        </div>
+        <button class="btn btn-primary" data-go-tab="tab-upload">Start new scan <span class="material-symbol">arrow_forward</span></button>
+      </div>
+
+      <div class="section-heading"><div><span class="eyebrow">NETWORK HEALTH</span><h3>Decision snapshot</h3></div><button class="text-button" data-go-tab="tab-monitoring">View monitoring <span class="material-symbol">arrow_forward</span></button></div>
+      <div class="metric-grid metric-grid-four">
+        <div class="metric-box metric-box-accent"><span class="material-symbol">warning</span><span class="metric-value" id="homeOpenDefects">17</span><span class="metric-label">Open defects</span></div>
+        <div class="metric-box"><span class="material-symbol">priority_high</span><span class="metric-value" id="homeCriticalDefects">5</span><span class="metric-label">High risk</span></div>
+        <div class="metric-box"><span class="material-symbol">sync</span><span class="metric-value" id="homeRecurringDefects">4</span><span class="metric-label">Recurring</span></div>
+        <div class="metric-box"><span class="material-symbol">check_circle</span><span class="metric-value metric-value-good" id="homeRepairedDefects">1</span><span class="metric-label">Recently repaired</span></div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="surface-panel priority-panel">
+          <div class="panel-heading"><div><span class="eyebrow">MAINTENANCE QUEUE</span><h3>Recommended next actions</h3></div><span class="badge badge-system">Budget-aware</span></div>
+          <div id="homePriorityList" class="priority-list"></div>
+          <button class="btn btn-secondary panel-action" data-go-tab="tab-monitoring">Open priority planner <span class="material-symbol">arrow_forward</span></button>
+        </div>
+        <div class="surface-panel warning-panel">
+          <div class="panel-heading"><div><span class="eyebrow">CITIZEN SAFETY</span><h3>Hazard broadcast</h3></div><span class="status-pill status-pill-on">ON</span></div>
+          <p>Low-false-alarm warnings are active for 5 high-risk defects. Motorcycle rider risk flags are included for deep or wide cavities.</p>
+          <label class="toggle-row"><span>Motorcycle risk alerts</span><input type="checkbox" id="motorcycleAlertToggle" checked><span class="toggle-control"></span></label>
+          <label class="toggle-row"><span>Citizen hazard warnings</span><input type="checkbox" id="citizenAlertToggle" checked><span class="toggle-control"></span></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 1: UPLOAD REAL VIDEO & GPS MAP LOCATION PICKER (DEFAULT FIRST PAGE)
+         ========================================================================= -->
+    <section id="tab-upload" class="tab-content active">
+      <div class="glass-card" style="max-width: 950px; margin: 0 auto; padding: 2rem;">
+        
+        <div class="card-header" style="text-align: center; display: block; margin-bottom: 1.5rem;">
+          <h2 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--text-main); margin-bottom: 0.4rem;">
+            📹 Step 1: Upload Video & Set Road Location
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">
+            Upload your dashcam/phone video, search your society location on the map, and set the starting & ending points of the survey road.
+          </p>
+        </div>
+
+        <!-- 1. Dropzone for Video File -->
+        <div class="dropzone" id="videoDropzone">
+          <div style="font-size: 3.5rem; margin-bottom: 0.5rem; color: var(--accent-cyan);">🎥</div>
+          <h3 style="font-family: var(--font-heading); margin-bottom: 0.5rem; font-size: 1.2rem;">
+            Select or Drag & Drop Road Video (.mp4, .webm, .mov)
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.2rem;">
+            Supports smartphone and dashcam recordings
+          </p>
+          <input type="file" id="fileVideoInput" accept="video/*" style="display: none;">
+          <button class="btn btn-primary" onclick="document.getElementById('fileVideoInput').click()">
+            📁 Choose Video File
+          </button>
+          <div id="videoFileStatus" style="margin-top: 0.8rem; font-size: 0.85rem; font-family: var(--font-mono); color: var(--accent-cyan); display: none;"></div>
+        </div>
+
+        <!-- 2. Map API Search & Interactive Start/End Location Picker -->
+        <div style="margin-top: 1.8rem; background: #ffffff; padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div style="font-weight: 700; font-size: 1rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+              <span>🗺️</span> Survey Road Route (OpenStreetMap API - Free Keyless)
+            </div>
+            <div style="font-size: 0.78rem; color: var(--accent-cyan);">
+              Click on map to place <strong>Start Pin 📍</strong> & <strong>End Pin 🏁</strong>
+            </div>
+          </div>
+
+          <!-- Location Search Bar (OpenStreetMap Nominatim Geocoding API) -->
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+            <input type="text" id="inputLocationSearch" placeholder="Type society, area or road name (e.g. Model Town Lahore, DHA Phase 5, FAST NUCES)" style="flex-grow: 1; padding: 0.6rem 1rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main); font-size: 0.88rem;">
+            <button class="btn btn-secondary" id="btnSearchLocation">🔍 Search Society Location</button>
+          </div>
+
+          <!-- Interactive Picker Map -->
+          <div id="pickerMap" style="width: 100%; height: 280px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 1rem; z-index: 1;"></div>
+
+          <!-- Coordinates Display Grid -->
+          <div class="grid-2" style="margin-bottom: 1rem;">
+            <div style="background: #f3f8ed; padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(99, 153, 34, 0.35);">
+              <label style="font-size: 0.8rem; font-weight: 700; color: #4e7b1c; display: block; margin-bottom: 0.3rem;">
+                📍 Survey Start Coordinates (Video 00:00)
+              </label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="number" step="0.000001" id="inputStartLat" value="31.478920" placeholder="Start Lat" style="width:50%; padding:0.5rem; background:var(--bg-input); border:1px solid var(--border-color); border-radius:4px; color:var(--text-main); font-family:var(--font-mono); font-size:0.8rem;">
+                <input type="number" step="0.000001" id="inputStartLng" value="74.305610" placeholder="Start Lng" style="width:50%; padding:0.5rem; background:var(--bg-input); border:1px solid var(--border-color); border-radius:4px; color:var(--text-main); font-family:var(--font-mono); font-size:0.8rem;">
+              </div>
+            </div>
+
+            <div style="background: #fff2f1; padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(226, 75, 74, 0.35);">
+              <label style="font-size: 0.8rem; font-weight: 700; color: #b93231; display: block; margin-bottom: 0.3rem;">
+                🏁 Survey End Coordinates (Video Endpoint)
+              </label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="number" step="0.000001" id="inputEndLat" value="31.482500" placeholder="End Lat" style="width:50%; padding:0.5rem; background:var(--bg-input); border:1px solid var(--border-color); border-radius:4px; color:var(--text-main); font-family:var(--font-mono); font-size:0.8rem;">
+                <input type="number" step="0.000001" id="inputEndLng" value="74.311200" placeholder="End Lng" style="width:50%; padding:0.5rem; background:var(--bg-input); border:1px solid var(--border-color); border-radius:4px; color:var(--text-main); font-family:var(--font-mono); font-size:0.8rem;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional CSV Telemetry File -->
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 0.8rem;">
+            <div style="font-size: 0.8rem; color: var(--text-muted);">
+              Optional: Have a smartphone GPS log CSV file? (Timestamp, Lat, Lng)
+            </div>
+            <input type="file" id="fileGpsInput" accept=".csv" style="display: none;">
+            <button class="btn btn-secondary" onclick="document.getElementById('fileGpsInput').click()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+              📡 Upload GPS CSV Log
+            </button>
+          </div>
+          <div id="gpsFileStatus" style="margin-top: 0.5rem; font-size: 0.8rem; font-family: var(--font-mono); color: var(--status-new); display: none;"></div>
+        </div>
+
+        <!-- Action Button to Start Detection -->
+        <div style="margin-top: 1.8rem; text-align: center;">
+          <button class="btn btn-primary" id="btnStartDetection" style="width: 100%; padding: 1rem; font-size: 1.1rem; letter-spacing: 0.02em;">
+            ⚡ PRESS TO DETECT POTHOLES IN VIDEO
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 2: REAL-TIME POTHOLE DETECTION & MAP VIEW
+         ========================================================================= -->
+    <section id="tab-detection" class="tab-content">
+      <div class="grid-main-side">
+        
+        <!-- Left: Video Player Canvas & HUD Controls -->
+        <div class="glass-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                <span>📹 Road Inspection Video Feed</span>
+                <span class="badge badge-system" id="currentVideoBadge">Uploaded Video</span>
+              </div>
+              <div class="card-subtitle">Real-time computer vision detection & GPS coordinate calculation</div>
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-secondary" id="btnToggleBBox">🔲 Bounding Boxes</button>
+            </div>
+          </div>
+
+          <!-- Video Canvas Stage -->
+          <div class="video-stage-container">
+            <video id="uploadedVideoPlayer" style="display:none;" playsinline muted></video>
+            <canvas id="videoCanvas" width="1280" height="720"></canvas>
+            
+            <div class="telemetry-overlay">
+              <div class="telemetry-item">
+                <span>LAT:</span> <strong id="hudLat">31.478920</strong>
+              </div>
+              <div class="telemetry-item">
+                <span>LNG:</span> <strong id="hudLng">74.305610</strong>
+              </div>
+              <div class="telemetry-item">
+                <span>SPEED:</span> <strong id="hudSpeed">35 km/h</strong>
+              </div>
+              <div class="telemetry-item">
+                <span>TIME:</span> <strong id="hudTime">00:00.0s</strong>
+              </div>
+              <div class="telemetry-item">
+                <span>DETECTOR:</span> <strong style="color:var(--status-new);">ACTIVE</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="video-controls">
+            <button class="btn btn-primary" id="btnPlayPause">▶ Play Video</button>
+            <div class="timeline-scrubber">
+              <span id="timeCurrent" style="font-family: var(--font-mono); font-size: 0.8rem;">00:00</span>
+              <input type="range" id="videoSeeker" min="0" max="100" step="0.1" value="0">
+              <span id="timeTotal" style="font-family: var(--font-mono); font-size: 0.8rem;">00:00</span>
+            </div>
+            <button class="btn btn-secondary" id="btnChangeVideo">📤 Change Video</button>
+          </div>
+        </div>
+
+        <!-- Right: Detected Potholes Log Table -->
+        <div class="glass-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🎯 Detected Potholes & Coordinates</div>
+              <div class="card-subtitle">Real-time detected anomalies from uploaded video</div>
+            </div>
+            <span class="badge badge-system" id="detectionCountBadge">0 Detections</span>
+          </div>
+
+          <div class="table-container" style="max-height: 380px;">
+            <table id="tableDetections">
+              <thead>
+                <tr>
+                  <th>Snapshot</th>
+                  <th>ID</th>
+                  <th>Coordinates (Lat, Lng)</th>
+                  <th>Conf.</th>
+                  <th>Severity</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyDetections">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn btn-secondary" id="btnExportScanCSV">📥 Export CSV Log</button>
+            <button class="btn btn-primary" id="btnGenerateReportTab">📄 Generate Report</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- GIS Map Section Below Video -->
+      <div class="glass-card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🗺️ Geospatial Pothole Map</div>
+            <div class="card-subtitle">Interactive map of detected potholes along surveyed road</div>
+          </div>
+        </div>
+        <div id="leafletMap"></div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 3: SOCIETY MANAGEMENT POTHOLE INSPECTION REPORT
+         ========================================================================= -->
+    <section id="tab-report" class="tab-content">
+      <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; max-width: 1000px; margin-left: auto; margin-right: auto;">
+        <div style="font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700;">
+          📋 Society Maintenance & Repair Documentation
+        </div>
+        <div style="display:flex; gap:0.75rem;">
+          <button class="btn btn-secondary" id="btnExportReportCSV">📥 Export Society CSV</button>
+          <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF Report</button>
+        </div>
+      </div>
+
+      <div class="report-paper" id="reportPaper">
+        <div class="report-header">
+          <div>
+            <h1 style="font-family: var(--font-heading); font-size: 1.7rem; color: var(--text-main); margin-bottom: 0.2rem;">
+              SOCIETY MANAGEMENT POTHOLE INSPECTION REPORT
+            </h1>
+            <p style="color: var(--accent-cyan); font-weight: 600; font-size: 0.85rem;">
+              Road Infrastructure Anomaly Audit & Repair Schedule
+            </p>
+          </div>
+          <div style="text-align: right; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
+            <div><strong>Report ID:</strong> <span id="reportId">RPT-2026-SOC</span></div>
+            <div><strong>Date:</strong> <span id="reportDate">Sept 1, 2026</span></div>
+            <div><strong>Status:</strong> <span style="color:var(--severity-high);">Action Required</span></div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="report-section-title">1. Inspection Summary</div>
+          <div class="grid-3" style="margin-top: 1rem; margin-bottom: 1rem;">
+            <div class="metric-box">
+              <span class="metric-value" id="rptTotalCount">0</span>
+              <span class="metric-label">Total Potholes Detected</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-value" id="rptHighSeverityCount" style="color: var(--severity-high);">0</span>
+              <span class="metric-label">High Risk / Urgent Repairs</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-value" id="rptAvgConf" style="color: var(--brand-orange);">0%</span>
+              <span class="metric-label">Avg AI Detection Confidence</span>
+            </div>
+          </div>
+          <p class="report-description" style="font-size: 0.88rem; line-height: 1.6; color: #374151;">
+            This formal report was generated from real-time road inspection video analysis. Each detected anomaly has been georeferenced with precise GPS coordinates, severity assessment, and snapshot evidence to enable society management and field maintenance crews to execute targeted road repairs.
+          </p>
+        </div>
+
+        <div class="report-section">
+          <div class="report-section-title">2. Detected Pothole Inventory & Action Plan</div>
+          <table style="width: 100%; border: 1px solid #334155; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.8rem;">
+            <thead>
+              <tr style="background: var(--brand-charcoal); color: #ffffff;">
+                <th style="padding: 10px; border: 1px solid #334155;">Pothole ID</th>
+                <th style="padding: 10px; border: 1px solid #334155;">Snapshot</th>
+                <th style="padding: 10px; border: 1px solid #334155;">Coordinates (Lat, Lng)</th>
+                <th style="padding: 10px; border: 1px solid #334155;">Severity</th>
+                <th style="padding: 10px; border: 1px solid #334155;">Area / Depth</th>
+                <th style="padding: 10px; border: 1px solid #334155;">Recommended Action</th>
+              </tr>
+            </thead>
+            <tbody id="reportTbody">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="report-section">
+          <div class="report-section-title">3. Society Management Directives</div>
+          <div class="defense-checklist">
+            <div class="checklist-item">
+              <div class="checklist-icon">🚨</div>
+              <div>
+                <strong>High Priority Potholes (Red):</strong>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">
+                  Requires immediate hot-mix asphalt patching within 24–48 hours to prevent severe vehicle chassis damage or tire blowouts.
+                </p>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <div class="checklist-icon">⚠️</div>
+              <div>
+                <strong>Medium Priority Potholes (Yellow):</strong>
+                <p style="font-size: 0.82rem; color: var(--text-muted);">
+                  Schedule cold-patch repair or crack sealing within 7 business days to stop water erosion expansion.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TEMPORAL MONITORING AND BUDGET PRIORITIZATION -->
+    <section id="tab-monitoring" class="tab-content">
+      <div class="mobile-page-heading">
+        <div><span class="eyebrow">RASTA / TEMPORAL MONITORING</span><h2>Track what changed.</h2><p>Reconciled history turns repeated scans into maintenance decisions.</p></div>
+        <button class="btn btn-secondary" data-go-tab="tab-reconcile"><span class="material-symbol">compare_arrows</span> Compare scans</button>
+      </div>
+      <div class="metric-grid metric-grid-three">
+        <div class="metric-box"><span class="metric-label">Recurring potholes</span><span class="metric-value">12</span><span class="trend-up">+3 this month</span></div>
+        <div class="metric-box"><span class="metric-label">Chronic defects</span><span class="metric-value">3</span><span class="trend-alert">Needs dispatch</span></div>
+        <div class="metric-box"><span class="metric-label">Average return interval</span><span class="metric-value">34<span class="metric-unit"> days</span></span><span class="trend-neutral">Across 4 segments</span></div>
+      </div>
+      <div class="surface-panel"><div class="panel-heading"><div><span class="eyebrow">PRIORITIZATION MODEL</span><h3>Limited budget planner</h3></div><span class="badge badge-fyp">Prototype model</span></div><p class="panel-copy">Rankings combine severity, recurrence, confidence, defect growth, road exposure, and motorcycle risk. Adjust the available repair budget to see the recommended dispatch order.</p><div class="budget-control"><label for="budgetInput">Available repair budget</label><div class="budget-input-wrap"><span>$</span><input id="budgetInput" type="number" min="0" step="100" value="12000"><span>/ month</span></div></div><div id="priorityPlanner" class="priority-planner"></div></div>
+      <div class="surface-panel"><div class="panel-heading"><div><span class="eyebrow">ACTIVE DEFECT LOG</span><h3>Recurring and chronic defects</h3></div><span class="badge badge-system">17 tracked</span></div><div class="defect-log"><article class="defect-row"><div class="defect-thumb defect-thumb-road"></div><div class="defect-main"><strong>PW-027 · Murree Road - Sec 4</strong><span>Chronic · Critical · 4 recurrences</span><div class="progress-track"><i style="width:78%"></i></div></div><button class="btn btn-secondary btn-small" data-alert="Dispatch queued for PW-027">Dispatch</button></article><article class="defect-row"><div class="defect-thumb defect-thumb-road"></div><div class="defect-main"><strong>PW-089 · Kashmir Highway</strong><span>High recurrence · Medium · 2 recurrences</span><div class="progress-track"><i style="width:46%"></i></div></div><button class="btn btn-secondary btn-small" data-alert="Details opened for PW-089">Details</button></article></div></div>
+    </section>
+
+  </main>
+
+    <!-- =========================================================================
+         TAB 4: MULTI-PASS RECONCILIATION (RECURRING / NEW / REPAIRED)
+         ========================================================================= -->
+    <section id="tab-reconcile" class="tab-content">
+      <div class="glass-card" style="max-width: 960px; margin: 0 auto; padding: 2rem;">
+
+        <div style="text-align: center; margin-bottom: 1.8rem;">
+          <h2 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--text-main); margin-bottom: 0.4rem;">🔁 Multi-Pass Pothole Reconciliation</h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted); max-width: 700px; margin: 0 auto;">
+            Upload two RASTA CSV scan exports from different dates. The system uses <strong style="color:var(--accent-cyan);">Haversine GPS distance matching</strong> to classify each pothole as Recurring, New, or Repaired.
+          </p>
+        </div>
+
+        <!-- CSV Upload Row -->
+        <div class="grid-2" style="margin-bottom: 1.5rem;">
+          <!-- Scan 1 CSV -->
+          <div style="background: #f8fafc; border: 1px solid rgba(99,153,34,0.35); border-radius: var(--radius-sm); padding: 1.2rem;">
+            <div style="font-weight: 700; font-size: 0.95rem; color: #4e7b1c; margin-bottom: 0.8rem;">📄 Scan 1 CSV (Earlier Date — Baseline)</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.8rem;">Export from your first road survey detection run.</p>
+            <input type="file" id="fileScan1CSV" accept=".csv" style="display:none;">
+            <button class="btn btn-secondary" onclick="document.getElementById('fileScan1CSV').click()" style="width:100%;">📁 Choose Scan 1 CSV</button>
+            <div id="scan1Status" style="margin-top:0.6rem; font-size:0.8rem; font-family:var(--font-mono); color:var(--accent-cyan); display:none;"></div>
+          </div>
+
+          <!-- Scan 2 CSV -->
+          <div style="background: #fff2f1; border: 1px solid rgba(226,75,74,0.35); border-radius: var(--radius-sm); padding: 1.2rem;">
+            <div style="font-weight: 700; font-size: 0.95rem; color: #b93231; margin-bottom: 0.8rem;">📄 Scan 2 CSV (Later Date — Follow-up)</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.8rem;">Export from your second road survey detection run.</p>
+            <input type="file" id="fileScan2CSV" accept=".csv" style="display:none;">
+            <button class="btn btn-secondary" onclick="document.getElementById('fileScan2CSV').click()" style="width:100%;">📁 Choose Scan 2 CSV</button>
+            <div id="scan2Status" style="margin-top:0.6rem; font-size:0.8rem; font-family:var(--font-mono); color:#b93231; display:none;"></div>
+          </div>
+        </div>
+
+        <!-- GPS Tolerance Slider -->
+        <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+          <div style="font-size: 0.85rem; color: var(--text-muted); flex: 1; min-width: 200px;">
+            <strong style="color: var(--text-main);">GPS Match Tolerance</strong><br>
+            <span style="font-size:0.78rem;">How close two GPS points must be to count as the SAME physical pothole. Consumer phones have ~3–5m drift, so 5m is recommended.</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.8rem;">
+            <input type="range" id="rangeGpsTolerance" min="1" max="15" step="0.5" value="5" style="width: 140px;">
+            <span id="labelGpsTolerance" style="font-family: var(--font-mono); font-size: 1rem; color: var(--accent-cyan); font-weight: 700; min-width: 50px;">5.0m</span>
+          </div>
+          <button class="btn btn-primary" id="btnRunReconcile">⚡ Run Reconciliation</button>
+        </div>
+
+        <!-- Summary Metrics -->
+        <div class="grid-3" style="margin-bottom: 1.5rem;" id="reconcileMetrics" style="display:none;">
+          <div class="metric-box">
+            <span class="metric-value" id="rcTotalCount" style="color:var(--accent-cyan);">—</span>
+            <span class="metric-label">Total Unique Physical Defects</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-value" id="rcRecurringCount" style="color:var(--severity-high);">—</span>
+            <span class="metric-label">🔁 Recurring Potholes</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-value" id="rcNewCount" style="color:var(--severity-medium);">—</span>
+            <span class="metric-label">🆕 New Defects Formed</span>
+          </div>
+        </div>
+
+        <!-- Results Table -->
+        <div id="reconcileResultsWrap" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <div style="font-family:var(--font-heading); font-weight:700;">📋 Reconciliation Decision Matrix</div>
+            <button class="btn btn-secondary" id="btnExportReconcileCSV">📥 Export Reconciliation CSV</button>
+          </div>
+          <div class="table-container" style="max-height: 450px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Reconciled ID</th>
+                  <th>Scan 1 ID</th>
+                  <th>Scan 2 ID</th>
+                  <th>GPS Offset</th>
+                  <th>Coordinates (Lat, Lng)</th>
+                  <th>Severity Trend</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyReconcile"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="reconcileEmptyState" style="text-align:center; padding: 3rem; color: var(--text-muted);">
+          <div style="font-size:3rem; margin-bottom:0.5rem;">📂</div>
+          <div style="font-size:0.9rem;">Upload two scan CSV files and press <strong>Run Reconciliation</strong> to begin.</div>
+          <div style="font-size:0.8rem; margin-top:0.5rem;">You can export scan CSVs from the <strong>"2. Video Pothole Detection"</strong> tab after running detection.</div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  
+  <!-- App JS Modules (Cache Busted) -->
+  <script src="js/detector.js?v=7"></script>
+  <script src="js/map.js?v=6"></script>
+  <script src="js/reconciler.js?v=6"></script>
+  <script src="js/datasets.js?v=6"></script>
+  <script src="js/app.js?v=6"></script>
+
+</body>
+</html>
