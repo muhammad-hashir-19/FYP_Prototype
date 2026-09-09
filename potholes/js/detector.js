@@ -38,7 +38,7 @@ class RASTADetector {
     /*
      * Send approximately one frame every 700ms.
      */
-    this.inferenceIntervalMs = 700;
+    this.inferenceIntervalMs = 2500;
 
     // Survey Road Route Endpoints
     this.startGps = {
