@@ -23,7 +23,8 @@ class RASTADetector {
     this.activeDetections = [];
     this.detectedPotholes = [];
     this.isRealVideo = false;
-    this.inferenceApiUrl = `${window.RASTA_API_URL || 'http://localhost:8000'}/detect`;
+    this.inferenceApiUrl =
+  `${window.RASTA_API_URL || 'https://fyp-prototype-0xdc.onrender.com'}/detect`;
     this.inferenceInFlight = false;
     this.lastInferenceAt = 0;
     this.inferenceIntervalMs = 700;
